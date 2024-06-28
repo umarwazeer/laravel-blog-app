@@ -1,98 +1,175 @@
-
 <template>
-<div id="app">
-    <h1>{{ formData.id ? 'Edit Blog' : 'Create New Blog' }}</h1>
-    <div class="container">
-    <div class="row">
-        <div class="col-sm-12">
+    <div id="app">
+      <h1>{{ formData.id ? 'Edit Blog' : 'Create New Blog' }}</h1>
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12">
             <div class="form">
-            <div class="form-group">
-                <label> Blog Title*</label>
+              <div class="form-group">
+                <label>Note Title*</label>
                 <input class="form-control" type="text" v-model="formData.title" required>
-            </div>
-            <div class="form-group">
-                <label>Blog Text*</label>
+              </div>
+              <div class="form-group">
+                <label>Note Text*</label>
                 <textarea type="textarea" rows="3" class="form-control" v-model="formData.content" required></textarea>
+              </div>
+              <div class="form-group">
+                <label>Image</label>
+                <input class="form-control" id="image" type="file" @change="handleImageUpload">
+              </div>
+              <div class="form-group">
+                <label>Video</label>
+                <input class="form-control" id="video" type="file" @change="handleVideoUpload">
+              </div>
+              <button class="btn btn-primary" @click="submitForm">{{ formData.id ? 'Update Post' : 'Create Post' }}</button>
             </div>
-            <button class="btn btn-primary" @click="submitForm">{{ formData.id ? 'Update Post' : 'Create Post' }}</button>
-            </div>
+          </div>
         </div>
+      </div>
     </div>
-    </div>
-</div>
-</template>
+  </template>
 
-<script>
-import axios from 'axios';
-import { useToast } from 'vue-toastification'
+  <script>
+  import axios from 'axios';
+  import Toast, { useToast } from 'vue-toastification';
 
-
-export default {
-    props: ['id'],
-
+  export default {
     data() {
-        return {
-            formData: {
-            id: null,
-            title: '',
-            content: ''
-      },
-
-        };
-
+      return {
+        formData: {
+          id: null,
+          title: '',
+          content: '',
+          image: null,
+          video: null
+        }
+      };
     },
 
     created() {
         const blogData = localStorage.getItem('blogData');
-    if (blogData) {
-      const blog = JSON.parse(blogData);
-        this.formData.id = blog.id;
-        this.formData.title = blog.title;
-      this.formData.content = blog.content;
-      localStorage.removeItem('blogData');
-    }
-  },
+        if (blogData) {
+            const blog = JSON.parse(blogData);
+            console.log("blog", blog)
+            this.formData.id = blog.id;
+            this.formData.title = blog.title;
+            this.formData.content = blog.content;
+            // if (blog.image) {
+            //     this.formData.imageUrl = this.getMediaUrl(blog.image);
+            // }
+            // if (blog.video) {
+            //     this.formData.videoUrl = this.getMediaUrl(blog.video);
+            // }
+            localStorage.removeItem('blogData');
+        }
+    },
 
     methods: {
-        submitForm() {
+
+      handleImageUpload(event) {
+        this.formData.image = event.target.files[0];
+      },
+      handleVideoUpload(event) {
+        this.formData.video = event.target.files[0];
+      },
+
+      submitForm() {
         if (this.formData.id) {
             this.updateBlog();
         } else {
             this.createBlog();
         }
+      const formData = new FormData();
+      formData.append('title', this.formData.title);
+      formData.append('content', this.formData.content);
+      if (this.formData.image) {
+        formData.append('image', this.image);
+      }
+      if (this.formData.video) {
+        formData.append('video', this.video);
+      }
+
+    //
     },
 
-    createBlog() {
+    async createBlog(formData) {
+        console.log("cretepostmehtod")
         const toast = useToast();
-        console.log("start the postBlog...", this.formData)
-        axios.post('http://127.0.0.1:8000/blogs', this.formData)
-          .then(response => {
-            console.log('Blog posted:', response.data);
-            toast.success('Blog successfully created!');
-            this.formData.title = '';
-            this.formData.content = '';
-          })
-          .catch(error => {
-            console.error('Error posting blog:', error);
-          });
+
+        try {
+        const response = await axios.post('http://127.0.0.1:8000/blogs', this.formData,
+         {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+    );  this.resetForm()
+        toast.success("blog created successfully")
+        console.log('Blog created successfully', response.data);
+      } catch (error) {
+        console.error('Error creating blog:', error);
+      }
       },
-      updateBlog() {
-        const toast = useToast();
-      console.log("Updating blog...", this.formData);
-      axios.put(`http://127.0.0.1:8000/blogs/${this.formData.id}`, this.formData)
-        .then(response => {
-          toast.success('Blog updated successfully!');
-          this.$router.push('/');
-          this.formData.title = '';
-          this.formData.content = '';
-        })
-        .catch(error => {
-          console.error('Error updating blog:', error);
-        });
+
+      async updateBlog() {
+        console.log("updateData", this.formData)
+  const toast = useToast();
+  try {
+    const formData = new FormData();
+    formData.append('title', this.formData.title);
+    formData.append('content', this.formData.content);
+
+
+    // if (this.formData.image) {
+    //   formData.append('image', this.formData.image);
+    // }
+
+    // if (this.formData.video) {
+    //   formData.append('video', this.formData.video);
+    // }
+
+    // Log the FormData content
+    // for (let pair of formData.entries()) {
+    //   console.log(pair[0] + ', ' + pair[1]);
+    // }
+
+    const response = await axios.put(`http://127.0.0.1:8000/blogs/${this.formData.id}`, formData,
+    //  {
+    //   headers: {
+    //     'Content-Type': 'multipart/form-data'
+    //   }
+    // }
+);
+
+    toast.success("Blog updated successfully");
+    console.log('Blog updated successfully', response.data);
+    this.$router.push('/');
+    this.resetForm()
+  } catch (error) {
+    // if (error.response) {
+    //   console.error('Validation errors:', error.response.data.errors);
+    //   toast.error("Error updating blog: " + JSON.stringify(error.response.data.errors));
+    // } else {
+      console.error('Error updating blog:', error);
+      toast.error("Error updating blog: " + error.message);
+    // }
+  }
+      },
+
+      resetForm() {
+      this.formData.title = '';
+      this.formData.content = '';
+      this.formData.image = null;
+      this.formData.video = null;
     }
+
+        // getMediaUrl(mediaPath) {
+        //     return `http://127.0.0.1:8000/storage/${mediaPath}`;
+        // }
     }
-    }
-</script>
+
+  };
+  </script>
 
 <style scoped>
 body {

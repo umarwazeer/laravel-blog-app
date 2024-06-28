@@ -1,78 +1,113 @@
 <template>
     <div>
+      <div class="row">
+        <div class="blog-section">
+          <div class="card" v-for="blog in blogs" :key="blog.id">
+            <!-- Display image if image_path exists -->
+
+            <!-- Display video if video_path exists -->
+            <!-- <div v-else-if="blog.video">
+              <video class="card__video" controls>
+                <source :src="getVideoUrl(blog.video)" type="video/mp4">
+              </video>
+            </div> -->
+            <!-- Default content if neither image nor video path exists -->
+            <div >
+                <div v-if="blog.image">
+              <img class="card__img" :src="getImageUrl(blog.image)" alt="Blog Image">
+              <!-- <img class="card__img" src="D:\Pictures\2.jpeg" alt="Blog Image"> -->
+            </div>
+              <h4 class="card-title">{{ blog.title }}</h4>
+              <h4 class="card-date">{{ blog.created_at }}</h4>
+              <h6 class="card-subtitle mb-3">{{ blog.content }}</h6>
+            </div>
+
+            <!-- Navigation and deletion buttons -->
+            <a href="#" @click="editPost(blog)" class="btn btn-edit"><i class="material-icons">edit</i></a>
+            <a href="#" @click="deleteBlog(blog)" class="btn btn-delete"><i class="material-icons">delete</i></a>
+          </div>
+        </div>
+      </div>
     </div>
-<div class="row">
-    <div class="blog-section">
-        <h2 style="text-align: center;">Read Our Blog</h2>
+  </template>
 
-                <div class="card" v-for="blog in blogs" :key="blog.id">
-                    <!-- <img class="card__img" src="https://images.unsplash.com/photo-1499244571948-7ccddb3583f1?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" > -->
-                    <h4 class="card-title">{{blog.title}}</h4>
-                    <h4 class="card-date">{{blog.created_at}}</h4>
-                    <h6 class="card-subtitle mb-3">{{blog.content}}</h6>
-                    <a href="#" @click="editPost(blog)" class="btn btn-edit"><i class="material-icons">edit</i></a>
-                    <a href="#" @click="deleteBlog(blog)" class="btn btn-delete"><i class="material-icons">delete</i></a>
-                </div>
-            </div>
-            </div>
-</template>
+  <script>
+  import axios from 'axios';
+  import Toast, { useToast } from 'vue-toastification';
 
-<script>
-import axios from 'axios';
-import { useToast } from 'vue-toastification';
-
-
-export default {
-
+  export default {
     data() {
-    return{
-            blogs: []
-        };
+      return {
+        blogs: [],
+        // imagePath: "D:\Pictures\2.jpeg"
+      };
     },
     mounted() {
-        this.fetchBlogs();
+      this.fetchBlogs();
     },
     methods: {
-
-    async fetchBlogs() {
+      async fetchBlogs() {
         try {
-            const response = await axios.get('http://127.0.0.1:8000/blogs');
-            this.blogs = response.data;
-            console.log("response", response.data)
+          const response = await axios.get('http://127.0.0.1:8000/blogs');
+        //   let img =
+          this.blogs.push(this.imagePath)
+          this.blogs = response.data;
+          console.log("Fetched blogs:", this.blogs);
         } catch (error) {
-            console.error('There was an error!', error);
+          console.error('Error fetching blogs:', error);
         }
-        },
+      },
 
-        editPost(blog) {
+      editPost(blog) {
             localStorage.setItem('blogData', JSON.stringify(blog));
             this.$router.push({ name: 'post' });
             console.log('Edit post', blog);
                 },
 
-        deleteBlog(blog) {
-            const toast = useToast();
-            console.log("blogId", blog.id)
-            axios.delete(`http://127.0.0.1:8000/blogs/${blog.id}`)
-                .then(response => {
-                console.log('Blog deleted:', blog.id);
-                toast.success('Blog successfully deleted!');
-                this.fetchBlogs();
-                })
-                .catch(error => {
-                console.error('Error deleting blog:', error);
-                toast.error('Error deleting blog!');
+      deleteBlog(blog) {
+        const toast = useToast();
+        if (!blog || !blog.id) {
+          console.error('Invalid blog object or blog ID');
+          return;
+        }
 
-                });
-          },
+        axios.delete(`http://127.0.0.1:8000/blogs/${blog.id}`)
+          .then(response => {
+            toast.success("blog deleted successfully")
+            console.log('Blog deleted:', blog.id);
 
+            this.fetchBlogs(); // Refresh blog list after deletion
+          })
+          .catch(error => {
+            console.error('Error deleting blog:', error);
+            toast.error("blog not deleted!")
 
+          });
+      },
+
+        getImageUrl(imagePath) {
+            return `http://127.0.0.1:8000/storage/${imagePath}`;
         },
 
+        getVideoUrl(videoPath) {
+            return `http://127.0.0.1:8000/storage/${videoPath}`;
+        }
+    //   getImageUrl(imagePath) {
+    //     if (!imagePath) {
+    //     return 'http://127.0.0.1:8000/storage/images/SCzQJ6wIpx1xXVnGgwaRbyI11j1yWsLujIf74P7x.jpg'; // Path to your placeholder image
+    //   }
+      // Assuming imagePath is relative to the storage path
+    //   return `http://127.0.0.1:8000/storage/images/SCzQJ6wIpx1xXVnGgwaRbyI11j1yWsLujIf74P7x.jpg`; // Path to your placeholder image
+    // }
 
-    };
-</script>
-
+    //   getVideoUrl(videoPath) {
+    //     // Assuming videos are stored in public storage or served directly from a path
+    //     console.log("videoPath", videoPath)
+    //     return `http://127.0.0.1:8000/blogs/${videoPath}`;
+    //   }
+    }
+  };
+  </script>
 
 <style scoped>
 body {
@@ -101,6 +136,10 @@ h3{
 img.card__img{
     width: 350px;
     padding:10px;
+    width: 95%;
+    border-radius: 5%;
+    height: 15vw;
+    object-fit: cover;
 
 }
 .blog-section{
@@ -115,15 +154,18 @@ img.card__img{
 }
 .card {
     background-color:#faf9f9;
-    margin: 80px 0px 0px 30px;
-    float: right;
-    padding: 10px;
-    margin-left: 30px;
+    margin: 20px 0px 0px 40px;
+    float: left;
+    padding: 0px 0px 0px 0px;
+    /* margin-left: 30px; */
     text-align: left;
     border-radius: 10px;
     max-width: 350px;
     box-shadow: 0px 2px 3px rgb(217, 217, 217);
 }
+/* .card_img{
+
+} */
 .card-date{
     color: rgb(99, 96, 96);
     top: 0;
