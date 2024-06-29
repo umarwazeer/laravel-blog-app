@@ -1,10 +1,6 @@
 # Blog App
 
-
-This is a full-stack blog application built with Laravel (backend) and Vue.js (frontend). The application allows users to create, edit, and delete blog posts with the option to upload images and videos.
-=======
-
-
+This is the ful-stack blog Application build with laravel(Backend) and Vu js frontend.
 ## Features
 
 - Create, edit, and delete blog posts
