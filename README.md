@@ -70,32 +70,6 @@ This is the ful-stack blog Application build with laravel(Backend) and Vu js fro
     npm run serve
     ```
 
-### API Endpoints
-
-- `GET /blogs`: Retrieve all blogs
-- `POST /blogs`: Create a new blog
-- `GET /blogs/{id}`: Retrieve a specific blog
-- `PUT /blogs/{id}`: Update a specific blog
-- `DELETE /blogs/{id}`: Delete a specific blog
-
-### Screenshots
-
-Include some screenshots of your application here.
-
-## Contributing
-
-If you would like to contribute, please fork the repository and make changes as you'd like. Pull requests are warmly welcome.
-
-    ```bash
-    php artisan migrate
-    ```
-
-5. Serve the application:
-
-    ```bash
-    php artisan serve
-    ```
-
 ### Frontend
 
 1. Navigate to the frontend directory:
