@@ -3,26 +3,20 @@
       <div class="row">
         <div class="blog-section">
           <div class="card" v-for="blog in blogs" :key="blog.id">
-            <!-- Display image if image_path exists -->
-
-            <!-- Display video if video_path exists -->
             <!-- <div v-else-if="blog.video">
               <video class="card__video" controls>
                 <source :src="getVideoUrl(blog.video)" type="video/mp4">
               </video>
             </div> -->
-            <!-- Default content if neither image nor video path exists -->
             <div >
                 <div v-if="blog.image">
               <img class="card__img" :src="getImageUrl(blog.image)" alt="Blog Image">
-              <!-- <img class="card__img" src="D:\Pictures\2.jpeg" alt="Blog Image"> -->
             </div>
               <h4 class="card-title">{{ blog.title }}</h4>
               <h4 class="card-date">{{ blog.created_at }}</h4>
               <h6 class="card-subtitle mb-3">{{ blog.content }}</h6>
             </div>
 
-            <!-- Navigation and deletion buttons -->
             <a href="#" @click="editPost(blog)" class="btn btn-edit"><i class="material-icons">edit</i></a>
             <a href="#" @click="deleteBlog(blog)" class="btn btn-delete"><i class="material-icons">delete</i></a>
           </div>
@@ -39,7 +33,6 @@
     data() {
       return {
         blogs: [],
-        // imagePath: "D:\Pictures\2.jpeg"
       };
     },
     mounted() {
@@ -92,19 +85,7 @@
         getVideoUrl(videoPath) {
             return `http://127.0.0.1:8000/storage/${videoPath}`;
         }
-    //   getImageUrl(imagePath) {
-    //     if (!imagePath) {
-    //     return 'http://127.0.0.1:8000/storage/images/SCzQJ6wIpx1xXVnGgwaRbyI11j1yWsLujIf74P7x.jpg'; // Path to your placeholder image
-    //   }
-      // Assuming imagePath is relative to the storage path
-    //   return `http://127.0.0.1:8000/storage/images/SCzQJ6wIpx1xXVnGgwaRbyI11j1yWsLujIf74P7x.jpg`; // Path to your placeholder image
-    // }
 
-    //   getVideoUrl(videoPath) {
-    //     // Assuming videos are stored in public storage or served directly from a path
-    //     console.log("videoPath", videoPath)
-    //     return `http://127.0.0.1:8000/blogs/${videoPath}`;
-    //   }
     }
   };
   </script>

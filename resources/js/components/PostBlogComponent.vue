@@ -115,11 +115,9 @@
         console.log("updateData", this.formData)
   const toast = useToast();
   try {
-    const formData = new FormData();
-    formData.append('title', this.formData.title);
-    formData.append('content', this.formData.content);
-
-
+    // const formData = new FormData();
+    // formData.append('title', this.formData.title);
+    // formData.append('content', this.formData.content);
     // if (this.formData.image) {
     //   formData.append('image', this.formData.image);
     // }
@@ -128,12 +126,7 @@
     //   formData.append('video', this.formData.video);
     // }
 
-    // Log the FormData content
-    // for (let pair of formData.entries()) {
-    //   console.log(pair[0] + ', ' + pair[1]);
-    // }
-
-    const response = await axios.put(`http://127.0.0.1:8000/blogs/${this.formData.id}`, formData,
+    const response = await axios.put(`http://127.0.0.1:8000/blogs/${this.formData.id}`, this.formData,
     //  {
     //   headers: {
     //     'Content-Type': 'multipart/form-data'
@@ -163,9 +156,6 @@
       this.formData.video = null;
     }
 
-        // getMediaUrl(mediaPath) {
-        //     return `http://127.0.0.1:8000/storage/${mediaPath}`;
-        // }
     }
 
   };
@@ -274,59 +264,3 @@ box-shadow: 0px 2px 3px rgb(217, 217, 217);
 text-align: left;
 }
 </style>
-
-
-
-
-
-<!-- <template>
-    <div>
-      <h2>Create New Blog Post</h2>
-      <form @submit.prevent="submitForm">
-        <div>
-          <label for="title">Title:</label>
-          <input type="text" id="title" v-model="formData.title" required>
-        </div>
-        <div>
-          <label for="content">Content:</label>
-          <textarea id="content" v-model="formData.content" required></textarea>
-        </div>
-        <button type="submit">Submit</button>
-      </form>
-    </div>
-  </template>
-
-  <script>
-  import axios from 'axios';
-
-  export default {
-    data() {
-      return {
-        formData: {
-          title: '',
-          content: ''
-        }
-      };
-    },
-    methods: {
-      submitForm() {
-        console.log("start the postBlog...", this.formData)
-        axios.post('http://127.0.0.1:8000/blogs', this.formData)
-          .then(response => {
-            console.log('Blog posted:', response.data);
-            // Optionally, you can redirect to another page or update the blog list
-            // this.$router.push('/blogs'); // Assuming you are using Vue Router
-            this.formData.title = '';
-            this.formData.content = '';
-          })
-          .catch(error => {
-            console.error('Error posting blog:', error);
-          });
-      }
-    }
-  };
-  </script>
-
-  <style scoped>
-  /* Add scoped styles here if needed */
-  </style> -->

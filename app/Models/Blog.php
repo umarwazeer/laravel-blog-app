@@ -1,5 +1,4 @@
 <?php
-// app/Models/Blog.php
 
 namespace App\Models;
 
@@ -15,8 +14,8 @@ class Blog extends Model
     protected $fillable = [
         'title',
         'content',
-        'image',  // New field for image
-        'video'   // New field for video
+        'image',
+        'video'
     ];
 
 

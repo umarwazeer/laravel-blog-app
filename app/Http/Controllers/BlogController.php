@@ -45,76 +45,35 @@ class BlogController extends Controller
         return $blog;
     }
 
-    // public function update(Request $request, Blog $blog)
-    //     {
-    //     try {
-    //         $validated = $request->validate([
-    //             'title' => 'required|string|min:3',
-    //             'content' => 'required|min:3',
-    //             'image' => 'nullable|image|mimes:jpeg,jpg,png,gif,svg|max:2048',
-    //         ]);
-
-    //         if ($request->file('image')) {
-    //             if ($blog->image) {
-    //                 Storage::disk('public')->delete($blog->image);
-    //             }
-    //             $imagePath = $request->file('image')->store('images', 'public');
-    //         } else {
-    //             $imagePath = $blog->image;
-    //         }
-
-    //         $blog->update([
-    //             'title' => $validated['title'],
-    //             'content' => $validated['content'],
-    //             'image' => $imagePath,
-    //         ]);
-
-    //         return response()->json($blog, 200);
-    //     } catch (ValidationException $e) {
-    //         return response()->json(['errors' => $e->errors()], 422);
-    // }
-    // }
-
     public function update(Request $request, Blog $blog)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'video' => 'nullable|mimes:mp4,mov,ogg,qt|max:20000'
-        ]);
+        {
+        try {
+            $validated = $request->validate([
+                'title' => 'required|string|min:3',
+                'content' => 'required|min:3',
+                'image' => 'nullable|image|mimes:jpeg,jpg,png,gif,svg|max:2048',
+            ]);
 
-        $data = $request->all();
-
-        if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($blog->image) {
-                Storage::disk('public')->delete($blog->image);
+            if ($request->file('image')) {
+                if ($blog->image) {
+                    Storage::disk('public')->delete($blog->image);
+                }
+                $imagePath = $request->file('image')->store('images', 'public');
+            } else {
+                $imagePath = $blog->image;
             }
-            // Store new image
-            $data['image'] = $request->file('image')->store('images', 'public');
-        } else {
-            // Do not update the image field if no new image is uploaded
-            unset($data['image']);
-        }
 
-        if ($request->hasFile('video')) {
-            // Delete old video if exists
-            if ($blog->video) {
-                Storage::disk('public')->delete($blog->video);
-            }
-            // Store new video
-            $data['video'] = $request->file('video')->store('videos', 'public');
-        } else {
-            // Do not update the video field if no new video is uploaded
-            unset($data['video']);
-        }
+            $blog->update([
+                'title' => $validated['title'],
+                'content' => $validated['content'],
+                'image' => $imagePath,
+            ]);
 
-        $blog->update($data);
-
-        return response()->json($blog, 200);
+            return response()->json($blog, 200);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
     }
-
+    }
 
     public function destroy(Blog $blog)
     {
