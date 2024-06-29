@@ -42,7 +42,6 @@
       async fetchBlogs() {
         try {
           const response = await axios.get('http://127.0.0.1:8000/blogs');
-        //   let img =
           this.blogs.push(this.imagePath)
           this.blogs = response.data;
           console.log("Fetched blogs:", this.blogs);
