@@ -85,7 +85,6 @@ Include some screenshots of your application here.
 ## Contributing
 
 If you would like to contribute, please fork the repository and make changes as you'd like. Pull requests are warmly welcome.
-=======
 
     ```bash
     php artisan migrate
